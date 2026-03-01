@@ -5,7 +5,8 @@ This repository contains materials for FIN301 Exam I.
 ## Contents
 
 - **FIN301Exam I Spring 2026 students (1) (1).pdf** - Exam questions
-- **FIN301_Exam_Answers.md** - Complete answer key with:
+- **FIN301_Exam_Answers.pdf** - Complete answer key in PDF format (12 pages)
+- **FIN301_Exam_Answers.md** - Complete answer key in Markdown format with:
   - All multiple choice answers (Q1-26)
   - Detailed calculations with timelines (Q27-29)
   - Essay question guidance (Q30-31)
