@@ -45,7 +45,7 @@ Certified Kubernetes Administrator (CKA)
 
 Projects
 Open-source contributor to Apache Airflow. Built a personal finance tracker
-used by 1 000+ users.
+used by 1,000+ users.
 """
 
 MINIMAL_RESUME = """\
