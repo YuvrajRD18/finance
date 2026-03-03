@@ -1,0 +1,5 @@
+# No external dependencies required – the AI Resume Agent uses only the
+# Python standard library.
+#
+# For running tests:
+#   pip install pytest
