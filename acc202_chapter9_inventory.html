@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACC 202 Chapter 9: Reporting &amp; Analyzing Inventory – Complete Solutions</title>
+<style>
+  :root {
+    --fifo-color: #2563eb;
+    --fifo-bg: #eff6ff;
+    --lifo-color: #ea580c;
+    --lifo-bg: #fff7ed;
+    --avg-color: #16a34a;
+    --avg-bg: #f0fdf4;
+    --yes-color: #15803d;
+    --yes-bg: #dcfce7;
+    --no-color: #b91c1c;
+    --no-bg: #fee2e2;
+    --explain-bg: #fefce8;
+    --explain-border: #facc15;
+    --proof-bg: #f0fdf4;
+    --proof-border: #22c55e;
+    --formula-bg: #f5f3ff;
+    --formula-border: #8b5cf6;
+    --header-start: #1e3a5f;
+    --header-end: #2563eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1e293b;
+    background: #f8fafc;
+    line-height: 1.6;
+  }
+  header {
+    background: linear-gradient(135deg, var(--header-start), var(--header-end));
+    color: #fff;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+  }
+  header h1 { font-size: 2rem; margin-bottom: .4rem; }
+  header p { opacity: .85; font-size: 1.05rem; }
+  .container { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+
+  /* ---------- Table of Contents ---------- */
+  .toc {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .toc h2 { font-size: 1.3rem; margin-bottom: .8rem; color: var(--header-start); }
+  .toc ol { padding-left: 1.4rem; }
+  .toc li { margin-bottom: .35rem; }
+  .toc a { color: var(--fifo-color); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ---------- Demo Section ---------- */
+  .demo {
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    overflow: hidden;
+  }
+  .demo-header {
+    padding: 1.2rem 1.5rem;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .demo-body { padding: 1.5rem; }
+  .demo-body h3 { margin: 1.2rem 0 .5rem; font-size: 1.1rem; }
+  .demo-body p, .demo-body li { margin-bottom: .5rem; }
+
+  /* header gradients per demo */
+  #demo9-1 .demo-header { background: linear-gradient(135deg,#0f766e,#14b8a6); }
+  #demo9-2 .demo-header { background: linear-gradient(135deg,#1d4ed8,#3b82f6); }
+  #demo9-3 .demo-header { background: linear-gradient(135deg,#7c3aed,#a78bfa); }
+  #demo9-4 .demo-header { background: linear-gradient(135deg,#b45309,#f59e0b); }
+  #demo9-5 .demo-header { background: linear-gradient(135deg,#be123c,#f43f5e); }
+  #demo9-6 .demo-header { background: linear-gradient(135deg,#4338ca,#818cf8); }
+
+  /* ---------- Cards (YES / NO) ---------- */
+  .card {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: .8rem;
+    border-left: 5px solid;
+  }
+  .card-yes { background: var(--yes-bg); border-color: var(--yes-color); }
+  .card-no  { background: var(--no-bg);  border-color: var(--no-color); }
+  .card .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: .85rem;
+    color: #fff;
+    margin-right: .5rem;
+  }
+  .badge-yes { background: var(--yes-color); }
+  .badge-no  { background: var(--no-color); }
+  .card .adjustment { font-weight: 700; }
+
+  /* ---------- Explanation Box ---------- */
+  .explain {
+    background: var(--explain-bg);
+    border-left: 4px solid var(--explain-border);
+    border-radius: 6px;
+    padding: .8rem 1rem;
+    margin: .3rem 0 1rem;
+    font-size: .95rem;
+  }
+
+  /* ---------- Proof Box ---------- */
+  .proof {
+    background: var(--proof-bg);
+    border-left: 4px solid var(--proof-border);
+    border-radius: 6px;
+    padding: .8rem 1rem;
+    margin: .5rem 0 1rem;
+    font-size: .95rem;
+  }
+  .proof::before { content: "✓ "; font-weight: 700; color: var(--proof-border); }
+
+  /* ---------- Formula Box ---------- */
+  .formula {
+    background: var(--formula-bg);
+    border: 1px solid var(--formula-border);
+    border-radius: 6px;
+    padding: .7rem 1rem;
+    margin: .5rem 0 1rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: .95rem;
+  }
+
+  /* ---------- Method badges ---------- */
+  .method-tag {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: .9rem;
+    color: #fff;
+    margin-bottom: .3rem;
+  }
+  .tag-fifo { background: var(--fifo-color); }
+  .tag-lifo { background: var(--lifo-color); }
+  .tag-avg  { background: var(--avg-color); }
+
+  /* ---------- Tables ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: .8rem 0 1.2rem;
+    font-size: .95rem;
+  }
+  th, td { padding: .55rem .8rem; text-align: center; border: 1px solid #cbd5e1; }
+  th { background: #e2e8f0; font-weight: 700; }
+  tr:hover td { background: #f1f5f9; }
+  /* color column headers */
+  .col-fifo { color: var(--fifo-color); font-weight: 700; }
+  .col-lifo { color: var(--lifo-color); font-weight: 700; }
+  .col-avg  { color: var(--avg-color);  font-weight: 700; }
+
+  /* ---------- Key Takeaways ---------- */
+  .takeaway {
+    background: linear-gradient(135deg,#fefce8,#fef9c3);
+    border: 1px solid #fde047;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .takeaway h2 { color: #854d0e; margin-bottom: .6rem; }
+  .takeaway ul { padding-left: 1.4rem; }
+  .takeaway li { margin-bottom: .4rem; }
+
+  /* ---------- Print Button ---------- */
+  .print-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--header-start), var(--header-end));
+    color: #fff;
+    border: none;
+    padding: .7rem 1.6rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 1rem 0;
+  }
+  .print-btn:hover { opacity: .9; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 640px) {
+    header h1 { font-size: 1.4rem; }
+    .container { padding: 1rem; }
+    table { font-size: .82rem; }
+    th, td { padding: .4rem; }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    .print-btn { display: none; }
+    header { background: var(--header-start) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: #fff; }
+    .demo { break-inside: avoid; }
+  }
+
+  .summary-calc {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    font-size: .95rem;
+  }
+
+  .concept-box {
+    background: #f0f9ff;
+    border-left: 4px solid #0ea5e9;
+    border-radius: 6px;
+    padding: .8rem 1rem;
+    margin: .5rem 0 1rem;
+    font-size: .95rem;
+  }
+
+  .insight {
+    background: #fdf4ff;
+    border-left: 4px solid #c026d3;
+    border-radius: 6px;
+    padding: .8rem 1rem;
+    margin: .5rem 0 1rem;
+    font-size: .95rem;
+    font-weight: 600;
+  }
+
+  strong { color: #0f172a; }
+  .data-table td:first-child { text-align: left; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ACC 202 – Chapter 9</h1>
+  <p>Reporting &amp; Analyzing Inventory: Complete Demo Solutions &amp; Explanations</p>
+</header>
+
+<div class="container">
+
+  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+  <!-- ===================== TABLE OF CONTENTS ===================== -->
+  <nav class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#demo9-1">Demo 9-1: Inventory Ownership (9 Scenarios)</a></li>
+      <li><a href="#demo9-2">Demo 9-2: Calculating COGS &amp; Ending Inventory – 3 Methods</a></li>
+      <li><a href="#demo9-3">Demo 9-3: Calculating Ending Inventory – 3 Methods</a></li>
+      <li><a href="#demo9-4">Demo 9-4: GAS, COGS &amp; Ending Inventory – 3 Methods</a></li>
+      <li><a href="#demo9-5">Demo 9-5: GAS, EI &amp; COGS – 3 Methods</a></li>
+      <li><a href="#demo9-6">Demo 9-6: Inventory Analysis &amp; Assessment</a></li>
+      <li><a href="#takeaways">Key Takeaways</a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== DEMO 9-1 ===================== -->
+  <section id="demo9-1" class="demo">
+    <div class="demo-header">Demo 9-1: Inventory Ownership (9 Scenarios)</div>
+    <div class="demo-body">
+      <p><strong>Finn Corporation</strong> ending inventory physical count = <strong>$600,000</strong> at 12/31. Evaluate 9 scenarios for correct ownership at year-end.</p>
+
+      <div class="concept-box">
+        <strong>Key Concepts:</strong><br>
+        • <strong>FOB Shipping Point</strong> – Title transfers to buyer when goods are <em>shipped</em>.<br>
+        • <strong>FOB Destination</strong> – Title transfers to buyer when goods <em>arrive</em> at destination.<br>
+        • <strong>Consignment Goods</strong> – Belong to consignor (owner), not consignee (holder).<br>
+        • <strong>Inventory</strong> – Only goods held for resale, NOT office supplies or other assets.
+      </div>
+
+      <!-- Scenario 1 -->
+      <h3>Scenario 1</h3>
+      <p>Finn shipped $55,000 to Hemlock <strong>FOB Shipping Point</strong> on Dec 28. Not in count.</p>
+      <div class="card card-no">
+        <span class="badge badge-no">NO</span> <span class="adjustment">$0 adjustment</span>
+      </div>
+      <div class="explain">FOB shipping point = title passed to Hemlock on Dec 28. Finn doesn't own it. <strong>Properly excluded.</strong></div>
+
+      <!-- Scenario 2 -->
+      <h3>Scenario 2</h3>
+      <p>$95,000 goods shipped TO Finn <strong>FOB Destination</strong> on Dec 27, still in transit. Not in count.</p>
+      <div class="card card-no">
+        <span class="badge badge-no">NO</span> <span class="adjustment">$0 adjustment</span>
+      </div>
+      <div class="explain">FOB destination = title passes on arrival. Still in transit = seller owns. <strong>Properly excluded.</strong></div>
+
+      <!-- Scenario 3 -->
+      <h3>Scenario 3</h3>
+      <p>Finn received $25,000 on Jan 2. Shipped <strong>FOB Shipping Point</strong> on Dec 26 by Yanice. Not in count.</p>
+      <div class="card card-yes">
+        <span class="badge badge-yes">YES</span> <span class="adjustment">+$25,000 adjustment</span>
+      </div>
+      <div class="explain">FOB shipping point = Finn owned since Dec 26 (shipping date). <strong>Improperly excluded.</strong> Add it back.</div>
+
+      <!-- Scenario 4 -->
+      <h3>Scenario 4</h3>
+      <p>Finn shipped $51,000 to Ehler <strong>FOB Destination</strong> on Dec 30. Arrived Jan 8. Not in count.</p>
+      <div class="card card-yes">
+        <span class="badge badge-yes">YES</span> <span class="adjustment">+$51,000 adjustment</span>
+      </div>
+      <div class="explain">FOB destination = Finn owns until arrival. Goods still in transit at 12/31. <strong>Improperly excluded.</strong> Add it back.</div>
+
+      <!-- Scenario 5 -->
+      <h3>Scenario 5</h3>
+      <p>$42,000 received Jan 2, shipped <strong>FOB Destination</strong> on Dec 29. Added to count in anticipation of arrival.</p>
+      <div class="card card-no">
+        <span class="badge badge-no">NO</span> <span class="adjustment">−$42,000 adjustment</span>
+      </div>
+      <div class="explain">FOB destination = title passes on delivery (Jan 2), NOT Dec 31. <strong>Improperly included.</strong> Remove it.</div>
+
+      <!-- Scenario 6 -->
+      <h3>Scenario 6</h3>
+      <p>$38,000 goods Finn holds on <strong>consignment</strong> for Nader Corporation. Included in count.</p>
+      <div class="card card-no">
+        <span class="badge badge-no">NO</span> <span class="adjustment">−$38,000 adjustment</span>
+      </div>
+      <div class="explain">Consignment goods belong to consignor (Nader), not consignee (Finn). <strong>Improperly included.</strong> Remove it.</div>
+
+      <!-- Scenario 7 -->
+      <h3>Scenario 7</h3>
+      <p>$17,000 office supplies in Finn's warehouse for staff use. Included in count.</p>
+      <div class="card card-no">
+        <span class="badge badge-no">NO</span> <span class="adjustment">−$17,000 adjustment</span>
+      </div>
+      <div class="explain">Office supplies ≠ merchandise inventory. They're a separate asset. <strong>Improperly included.</strong> Remove it.</div>
+
+      <!-- Scenario 8 -->
+      <h3>Scenario 8</h3>
+      <p>$87,000 of Finn's goods held on consignment BY Barrett Corp. Not in count.</p>
+      <div class="card card-yes">
+        <span class="badge badge-yes">YES</span> <span class="adjustment">+$87,000 adjustment</span>
+      </div>
+      <div class="explain">Finn is consignor and still owns goods even though Barrett holds them. <strong>Improperly excluded.</strong> Add it back.</div>
+
+      <!-- Scenario 9 -->
+      <h3>Scenario 9</h3>
+      <p>Order completed Dec 29 (cost $29,000, sell $40,000), boxed on dock. Shipper picked up Jan 1. <strong>FOB Shipping Point</strong>. Not in count.</p>
+      <div class="card card-yes">
+        <span class="badge badge-yes">YES</span> <span class="adjustment">+$29,000 (at cost) adjustment</span>
+      </div>
+      <div class="explain">FOB shipping point = title passes at pickup (Jan 1). Finn still owns at 12/31. <strong>Improperly excluded.</strong> Add it back at <strong>cost</strong>, not selling price.</div>
+
+      <!-- Summary -->
+      <h3>Summary Calculation</h3>
+      <div class="summary-calc">
+        Adjustments: +$25,000 + $51,000 − $42,000 − $38,000 − $17,000 + $87,000 + $29,000 = <strong>+$95,000</strong><br><br>
+        Finn's Correct 12/31 Inventory Balance: $600,000 + $95,000 = <strong>$695,000</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DEMO 9-2 ===================== -->
+  <section id="demo9-2" class="demo">
+    <div class="demo-header">Demo 9-2: Calculating COGS &amp; Ending Inventory Using 3 Methods</div>
+    <div class="demo-body">
+      <p><strong>Ohm Electronics</strong> Data:</p>
+      <table>
+        <tr><th>Item</th><th>Units</th><th>Cost/Unit</th><th>Total</th></tr>
+        <tr><td style="text-align:left">Beginning Inventory</td><td>3,000</td><td>$5</td><td>$15,000</td></tr>
+        <tr><td style="text-align:left">Purchase 1</td><td>7,000</td><td>$7</td><td>$49,000</td></tr>
+        <tr style="font-weight:700;background:#e2e8f0"><td style="text-align:left">Goods Available for Sale</td><td>10,000</td><td></td><td>$64,000</td></tr>
+      </table>
+      <p>Units Sold: <strong>8,400</strong> &nbsp;|&nbsp; Ending Inventory: <strong>1,600 units</strong></p>
+
+      <!-- FIFO -->
+      <h3><span class="method-tag tag-fifo">FIFO</span> First-In, First-Out</h3>
+      <div class="formula">Ending Inventory: 1,600 units × $7 = <strong>$11,200</strong></div>
+      <div class="formula">COGS: $64,000 − $11,200 = <strong>$52,800</strong></div>
+      <div class="proof">Proof (sold oldest first): 3,000 × $5 = $15,000 + 5,400 × $7 = $37,800 → <strong>$52,800</strong></div>
+
+      <!-- LIFO -->
+      <h3><span class="method-tag tag-lifo">LIFO</span> Last-In, First-Out</h3>
+      <div class="formula">Ending Inventory: 1,600 units × $5 = <strong>$8,000</strong></div>
+      <div class="formula">COGS: $64,000 − $8,000 = <strong>$56,000</strong></div>
+      <div class="proof">Proof (sold newest first): 7,000 × $7 = $49,000 + 1,400 × $5 = $7,000 → <strong>$56,000</strong></div>
+
+      <!-- Average -->
+      <h3><span class="method-tag tag-avg">AVG</span> Average-Cost (Weighted Average)</h3>
+      <div class="formula">Weighted Average Cost = $64,000 ÷ 10,000 = <strong>$6.40 per unit</strong></div>
+      <div class="formula">Ending Inventory: 1,600 × $6.40 = <strong>$10,240</strong></div>
+      <div class="formula">COGS: 8,400 × $6.40 = <strong>$53,760</strong></div>
+      <div class="proof">Proof: $64,000 − $10,240 = <strong>$53,760</strong></div>
+
+      <!-- Comparison Table -->
+      <h3>Summary Comparison</h3>
+      <table>
+        <tr><th>Metric</th><th class="col-fifo">FIFO</th><th class="col-lifo">LIFO</th><th class="col-avg">Avg Cost</th></tr>
+        <tr><td style="text-align:left">Goods Available for Sale</td><td>$64,000</td><td>$64,000</td><td>$64,000</td></tr>
+        <tr><td style="text-align:left">COGS</td><td>$52,800</td><td>$56,000</td><td>$53,760</td></tr>
+        <tr><td style="text-align:left">Ending Inventory</td><td>$11,200</td><td>$8,000</td><td>$10,240</td></tr>
+      </table>
+      <div class="insight">Key Insight: In a period of RISING PRICES, average-cost values fall BETWEEN FIFO and LIFO for both Ending Inventory and COGS.</div>
+    </div>
+  </section>
+
+  <!-- ===================== DEMO 9-3 ===================== -->
+  <section id="demo9-3" class="demo">
+    <div class="demo-header">Demo 9-3: Calculating Ending Inventory Using 3 Methods</div>
+    <div class="demo-body">
+      <p><strong>McLanie Company</strong> (First Month of Operations):</p>
+      <table>
+        <tr><th>Item</th><th>Units</th><th>Cost/Unit</th><th>Total</th></tr>
+        <tr><td style="text-align:left">Beginning Inventory</td><td>0</td><td>—</td><td>$0</td></tr>
+        <tr><td style="text-align:left">Purchase 1</td><td>300</td><td>$6</td><td>$1,800</td></tr>
+        <tr><td style="text-align:left">Purchase 2</td><td>400</td><td>$8</td><td>$3,200</td></tr>
+        <tr><td style="text-align:left">Purchase 3</td><td>600</td><td>$9</td><td>$5,400</td></tr>
+        <tr style="font-weight:700;background:#e2e8f0"><td style="text-align:left">Goods Available for Sale</td><td>1,300</td><td></td><td>$10,400</td></tr>
+      </table>
+      <p>Ending Inventory Count: <strong>200 units</strong> &nbsp;|&nbsp; Units Sold: <strong>1,100</strong></p>
+
+      <h3>A. <span class="method-tag tag-fifo">FIFO</span> Ending Inventory</h3>
+      <div class="formula">200 units (most recent purchase) × $9 = <strong>$1,800</strong></div>
+
+      <h3>B. <span class="method-tag tag-lifo">LIFO</span> Ending Inventory</h3>
+      <div class="formula">200 units (oldest purchase) × $6 = <strong>$1,200</strong></div>
+
+      <h3>C. <span class="method-tag tag-avg">AVG</span> Weighted Average Cost per Unit</h3>
+      <div class="formula">$10,400 ÷ 1,300 = <strong>$8.00 per unit</strong></div>
+
+      <h3>D. <span class="method-tag tag-avg">AVG</span> Average-Cost Ending Inventory</h3>
+      <div class="formula">200 × $8.00 = <strong>$1,600</strong></div>
+
+      <div class="insight">Think About It: FIFO does the best job of reporting ending inventory on the balance sheet at an amount closest to current market value, because FIFO assigns the most recent (most current) costs to ending inventory.</div>
+    </div>
+  </section>
+
+  <!-- ===================== DEMO 9-4 ===================== -->
+  <section id="demo9-4" class="demo">
+    <div class="demo-header">Demo 9-4: GAS, COGS &amp; Ending Inventory – 3 Methods</div>
+    <div class="demo-body">
+      <p><strong>Johnson Company</strong> (June):</p>
+      <table>
+        <tr><th>Item</th><th>Units</th><th>Cost/Unit</th><th>Total</th></tr>
+        <tr><td style="text-align:left">Jun 1 Beginning Inventory</td><td>225</td><td>$5</td><td>$1,125</td></tr>
+        <tr><td style="text-align:left">Jun 12 Purchase</td><td>525</td><td>$6</td><td>$3,150</td></tr>
+        <tr><td style="text-align:left">Jun 23 Purchase</td><td>750</td><td>$7</td><td>$5,250</td></tr>
+        <tr style="font-weight:700;background:#e2e8f0"><td style="text-align:left">Goods Available for Sale</td><td>1,500</td><td></td><td>$9,525</td></tr>
+      </table>
+      <p>Units Sold: <strong>1,300</strong> &nbsp;|&nbsp; Ending Inventory: <strong>200 units</strong></p>
+
+      <!-- A(1) FIFO -->
+      <h3>A(1) <span class="method-tag tag-fifo">FIFO</span></h3>
+      <div class="formula">Ending Inventory: 200 units × $7 = <strong>$1,400</strong></div>
+      <div class="formula">COGS: $9,525 − $1,400 = <strong>$8,125</strong></div>
+      <div class="proof">Proof: 225 × $5 = $1,125 + 525 × $6 = $3,150 + 550 × $7 = $3,850 → <strong>$8,125</strong></div>
+
+      <!-- A(2) LIFO -->
+      <h3>A(2) <span class="method-tag tag-lifo">LIFO</span></h3>
+      <div class="formula">Ending Inventory: 200 units × $5 = <strong>$1,000</strong></div>
+      <div class="formula">COGS: $9,525 − $1,000 = <strong>$8,525</strong></div>
+      <div class="proof">Proof: 750 × $7 = $5,250 + 525 × $6 = $3,150 + 25 × $5 = $125 → <strong>$8,525</strong></div>
+
+      <!-- A(3) Average -->
+      <h3>A(3) <span class="method-tag tag-avg">AVG</span></h3>
+      <div class="formula">Weighted Average Cost: $9,525 ÷ 1,500 = <strong>$6.35 per unit</strong></div>
+      <div class="formula">Ending Inventory: 200 × $6.35 = <strong>$1,270</strong></div>
+      <div class="formula">COGS: 1,300 × $6.35 = <strong>$8,255</strong></div>
+      <div class="proof">Proof: $9,525 − $1,270 = <strong>$8,255</strong></div>
+
+      <!-- Part B -->
+      <h3>B. Comparison to FIFO &amp; LIFO</h3>
+      <div class="explain">Average-cost values fall BETWEEN FIFO and LIFO for both ending inventory and COGS. This is because weighted average blends all costs, whereas FIFO uses oldest (lowest) costs for COGS and LIFO uses newest (highest) costs for COGS in a period of rising prices.</div>
+
+      <table>
+        <tr><th></th><th class="col-fifo">FIFO</th><th class="col-lifo">LIFO</th><th class="col-avg">Avg Cost</th></tr>
+        <tr><td style="text-align:left">Goods Available for Sale</td><td>$9,525</td><td>$9,525</td><td>$9,525</td></tr>
+        <tr><td style="text-align:left">COGS</td><td>$8,125</td><td>$8,525</td><td>$8,255</td></tr>
+        <tr><td style="text-align:left">Ending Inventory</td><td>$1,400</td><td>$1,000</td><td>$1,270</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== DEMO 9-5 ===================== -->
+  <section id="demo9-5" class="demo">
+    <div class="demo-header">Demo 9-5: GAS, EI &amp; COGS – 3 Methods</div>
+    <div class="demo-body">
+      <p><strong>Jeters Company Inc.</strong>:</p>
+      <table>
+        <tr><th>Item</th><th>Units</th><th>Cost/Unit</th><th>Total</th></tr>
+        <tr><td style="text-align:left">Beginning Inventory</td><td>100</td><td>$4</td><td>$400</td></tr>
+        <tr><td style="text-align:left">Jun 12 Purchase</td><td>400</td><td>$6</td><td>$2,400</td></tr>
+        <tr><td style="text-align:left">Jun 23 Purchase</td><td>250</td><td>$11</td><td>$2,750</td></tr>
+        <tr style="font-weight:700;background:#e2e8f0"><td style="text-align:left">Goods Available for Sale</td><td>750</td><td></td><td>$5,550</td></tr>
+      </table>
+      <p>Ending Inventory Count: <strong>75 units</strong> &nbsp;|&nbsp; Units Sold: <strong>675</strong></p>
+
+      <h3>Part A: Goods Available for Sale</h3>
+      <div class="formula">Total units: 100 + 400 + 250 = <strong>750</strong><br>Total cost: $400 + $2,400 + $2,750 = <strong>$5,550</strong></div>
+
+      <h3>Part B(1) <span class="method-tag tag-fifo">FIFO</span></h3>
+      <div class="formula">Ending Inventory: 75 units × $11 = <strong>$825</strong></div>
+      <div class="formula">COGS: $5,550 − $825 = <strong>$4,725</strong></div>
+      <div class="proof">Proof: 100 × $4 = $400 + 400 × $6 = $2,400 + 175 × $11 = $1,925 → <strong>$4,725</strong></div>
+
+      <h3>Part B(2) <span class="method-tag tag-lifo">LIFO</span></h3>
+      <div class="formula">Ending Inventory: 75 units × $4 = <strong>$300</strong></div>
+      <div class="formula">COGS: $5,550 − $300 = <strong>$5,250</strong></div>
+      <div class="proof">Proof: 250 × $11 = $2,750 + 400 × $6 = $2,400 + 25 × $4 = $100 → <strong>$5,250</strong></div>
+
+      <h3>Part B(3) <span class="method-tag tag-avg">AVG</span></h3>
+      <div class="formula">Weighted Average Cost: $5,550 ÷ 750 = <strong>$7.40 per unit</strong></div>
+      <div class="formula">Ending Inventory: 75 × $7.40 = <strong>$555</strong></div>
+      <div class="formula">COGS: 675 × $7.40 = <strong>$4,995</strong></div>
+      <div class="proof">Proof: $5,550 − $555 = <strong>$4,995</strong></div>
+
+      <h3>Part C: Summary of Results</h3>
+      <table>
+        <tr><th></th><th class="col-fifo">FIFO</th><th class="col-lifo">LIFO</th><th class="col-avg">Avg Cost</th></tr>
+        <tr><td style="text-align:left">Goods Available for Sale</td><td>$5,550</td><td>$5,550</td><td>$5,550</td></tr>
+        <tr><td style="text-align:left">COGS</td><td>$4,725</td><td>$5,250</td><td>$4,995</td></tr>
+        <tr><td style="text-align:left">Ending Inventory</td><td>$825</td><td>$300</td><td>$555</td></tr>
+      </table>
+
+      <h3>C.1 – Best method for Ending Inventory on Balance Sheet?</h3>
+      <div class="explain"><strong>FIFO</strong> does the best job. FIFO ending inventory of $825 (75 units × $11) reflects the most recent purchase price of $11, which is closest to current market replacement cost.</div>
+
+      <h3>C.2 – Best method for COGS on Income Statement?</h3>
+      <div class="explain"><strong>LIFO</strong> does the best job. LIFO COGS of $5,250 includes the most recently purchased (most current-cost) units sold, providing better matching of current costs against current revenues.</div>
+
+      <h3>C.3 – Why is COGS highest with LIFO and lowest with FIFO?</h3>
+      <div class="explain">Because <strong>unit costs were rising over time</strong> ($4 → $6 → $11). In a period of rising prices:<br>
+        • LIFO assigns newest (highest) costs to COGS → <strong>Highest COGS</strong><br>
+        • FIFO assigns oldest (lowest) costs to COGS → <strong>Lowest COGS</strong><br>
+        • Average-cost blends all → <strong>Middle COGS</strong><br><br>
+        If costs had been declining, the relationship would reverse.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DEMO 9-6 ===================== -->
+  <section id="demo9-6" class="demo">
+    <div class="demo-header">Demo 9-6: Inventory Analysis &amp; Assessment</div>
+    <div class="demo-body">
+      <p><strong>Fedor Company</strong> (switched to JIT early in 20X7):</p>
+
+      <table>
+        <tr><th>Data</th><th>20X6</th><th>20X7</th></tr>
+        <tr><td style="text-align:left">Sales Revenue</td><td>$3,120,000</td><td>$3,713,000</td></tr>
+        <tr><td style="text-align:left">Cost of Goods Sold</td><td>$1,200,000</td><td>$1,425,000</td></tr>
+        <tr><td style="text-align:left">Beginning Inventory</td><td>$170,000</td><td>$210,000</td></tr>
+        <tr><td style="text-align:left">Ending Inventory</td><td>$210,000</td><td>$90,000</td></tr>
+      </table>
+
+      <h3>Part A: Inventory Turnover &amp; Days in Inventory</h3>
+
+      <div class="formula">
+        Inventory Turnover = COGS ÷ Average Inventory<br>
+        Days in Inventory = 365 ÷ Inventory Turnover<br>
+        Average Inventory = (Beginning Inventory + Ending Inventory) ÷ 2
+      </div>
+
+      <h3>20X6 Calculations</h3>
+      <div class="formula">
+        Average Inventory = ($170,000 + $210,000) ÷ 2 = <strong>$190,000</strong><br>
+        Inventory Turnover = $1,200,000 ÷ $190,000 = <strong>6.32 times</strong><br>
+        Days in Inventory = 365 ÷ 6.32 = <strong>57.75 days</strong>
+      </div>
+
+      <h3>20X7 Calculations</h3>
+      <div class="formula">
+        Average Inventory = ($210,000 + $90,000) ÷ 2 = <strong>$150,000</strong><br>
+        Inventory Turnover = $1,425,000 ÷ $150,000 = <strong>9.50 times</strong><br>
+        Days in Inventory = 365 ÷ 9.50 = <strong>38.42 days</strong>
+      </div>
+
+      <table>
+        <tr><th>Metric</th><th>20X6</th><th>20X7</th></tr>
+        <tr><td style="text-align:left">Inventory Turnover</td><td>6.32 times</td><td>9.50 times</td></tr>
+        <tr><td style="text-align:left">Days in Inventory</td><td>57.75 days</td><td>38.42 days</td></tr>
+      </table>
+
+      <h3>Part B: Discussion</h3>
+
+      <h3>B.1 – Changes in Inventory, Turnover &amp; Days – Consistent with JIT?</h3>
+
+      <div class="explain">
+        <strong>(a) Amount of Inventory Change:</strong><br>
+        Ending inventory decreased dramatically from $210,000 (20X6) to $90,000 (20X7) = <strong>$120,000 decrease (57.1% reduction)</strong>. Average inventory also declined from $190,000 to $150,000.<br><br>
+
+        <strong>(b) Inventory Turnover &amp; Days in Inventory Changes:</strong><br>
+        • Inventory Turnover <strong>increased</strong> from 6.32 to 9.50 times (50.6% increase)<br>
+        • Days in Inventory <strong>decreased</strong> from 57.75 to 38.42 days (33.5% improvement)<br><br>
+
+        <strong>YES</strong>, these results are entirely consistent with Just-in-Time (JIT):<br>
+        ✓ <strong>Lower inventory levels</strong> – goods received only as needed (confirmed by $120,000 decrease)<br>
+        ✓ <strong>Higher inventory turnover</strong> – inventory moves faster (confirmed by 6.32 → 9.50)<br>
+        ✓ <strong>Fewer days in inventory</strong> – less time goods spend on hand (confirmed by 57.75 → 38.42)<br><br>
+        JIT benefits: Reduced carrying costs, storage costs, obsolescence risk, and improved cash flow.
+      </div>
+
+      <h3>B.2 – What happened to sales revenue?</h3>
+
+      <div class="explain">
+        Sales Revenue <strong>increased</strong> from $3,120,000 (20X6) to $3,713,000 (20X7) = <strong>$593,000 increase (19.0%)</strong>.<br><br>
+
+        Possible Explanations:<br>
+        1. <strong>Improved customer satisfaction</strong> from JIT → faster delivery, fresher products<br>
+        2. <strong>Cost savings passed to customers</strong> → lower prices driving higher volume<br>
+        3. <strong>Freed-up capital</strong> from reduced inventory → reinvested in marketing &amp; R&amp;D<br>
+        4. <strong>General market growth</strong> or expansion into new markets<br>
+        5. <strong>Better product availability</strong> due to JIT responsiveness<br>
+        6. <strong>Improved profitability</strong> enables reinvestment in growth initiatives
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== KEY TAKEAWAYS ===================== -->
+  <section id="takeaways" class="takeaway">
+    <h2>📌 Key Takeaways for All Demos</h2>
+    <h3>Inventory Ownership (Demo 9-1)</h3>
+    <ul>
+      <li>Know FOB terms, consignment rules, and what qualifies as inventory</li>
+      <li>Audit physical counts against these ownership criteria</li>
+    </ul>
+
+    <h3>Inventory Methods (Demos 9-2 through 9-5)</h3>
+    <ul>
+      <li><strong>FIFO:</strong> Best for balance sheet (current market value for Ending Inventory)</li>
+      <li><strong>LIFO:</strong> Best for income statement (current market matching for COGS)</li>
+      <li><strong>Average-Cost:</strong> Middle ground between both</li>
+      <li>In rising prices: FIFO EI highest, LIFO COGS highest</li>
+      <li>In declining prices: Relationship reverses</li>
+    </ul>
+
+    <h3>Inventory Analysis (Demo 9-6)</h3>
+    <ul>
+      <li>Higher turnover = faster selling = lower carrying costs</li>
+      <li>JIT reduces inventory while maintaining/increasing sales</li>
+      <li>Monitor trends year-over-year for operational efficiency</li>
+    </ul>
+  </section>
+
+  <footer style="text-align:center;padding:1.5rem;color:#64748b;font-size:.85rem;">
+    ACC 202 Chapter 9 – Reporting &amp; Analyzing Inventory – Complete Demo Solutions
+  </footer>
+</div>
+
+</body>
+</html>
